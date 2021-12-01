@@ -5,6 +5,12 @@ ALGraph::ALGraph(char c[], int v, int e)
 	this->vertexNum = v;
 	this->arcNum = e;
 
+	//初始化visited[]，用于DFS/BFS
+	for (int i = 0; i < MAX_VERTEX; i++)
+	{
+		visited[i] = 0;
+	}
+
 	//为顶点表赋值：将参数c[]中的数据放入adjList[]中
 	for (int i = 0; i < this->vertexNum; i++)
 	{
@@ -70,6 +76,52 @@ void ALGraph::display()
 	}
 }
 
+void ALGraph::DFSTraverse(int v)
+{
+	//初始化visited[]
+	visitedClean();
+
+	//从v节点开始遍历图
+	DFS(v);
+
+	//检查整个图中的所有顶点，如果还有未遍历过的顶点，则从该顶点开始遍历
+	for (int i = 0; i < vertexNum; i++)
+	{
+		if (visited[i] == 0)
+		{
+			//cout << "visited是：" << visited[i] << endl;
+			DFS(i);
+		}
+	}
+}
+
+void ALGraph::DFS(int v)
+{
+	//输出节点
+	cout << adjList[v].vertex << " ";
+	visited[v] = 1;
+
+	//创建指针p指向当前节点的下一个节点
+	ArcNode* p;
+	p = adjList[v].firstEdge;
+	//如果下一个节点不会空
+	while (p != NULL)
+	{
+		//如果下一个节点还未被访问输出过
+		if (visited[p->adjVex] == 0)
+			DFS(p->adjVex);//用递归继续访问下一个节点
+		p = p->next;//将指针p继续移动到再下一个节点
+	}
+}
+
+void ALGraph::visitedClean()
+{
+	for (int i = 0; i < MAX_VERTEX; i++)
+	{
+		visited[i] = 0;
+	}
+}
+
 int main()
 {
 	int vNum, aNum;
@@ -87,6 +139,12 @@ int main()
 
 	ALGraph alg(c, vNum, aNum);
 	alg.display();
+
+	int start;
+	cout << "进行深度遍历，请选择起始vertex的序号：" << endl;
+	cin >> start;
+	alg.DFSTraverse(start);
+	
 
 	system("pause");
 	return 0;

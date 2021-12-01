@@ -22,9 +22,14 @@ class ALGraph
 {
 private:
 	VertexNode adjList[MAX_VERTEX];
+	int visited[MAX_VERTEX];
 	int vertexNum, arcNum; 
 
 	void buildList();
+
+	void DFS(int v);
+
+	void BFS(int v);
 
 public:
 	ALGraph(char c[], int v, int e);
@@ -36,4 +41,6 @@ public:
 	void BFSTraverse(int v);
 
 	void display();
+
+	void visitedClean();
 };
