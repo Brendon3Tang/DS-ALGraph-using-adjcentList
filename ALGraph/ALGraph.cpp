@@ -1,6 +1,6 @@
 #include "ALGraph.h";
 
-ALGraph::ALGraph(char c[], int v, int e)
+ALGraph::ALGraph(int c[], int v, int e)
 {
 	this->vertexNum = v;
 	this->arcNum = e;
@@ -12,9 +12,10 @@ ALGraph::ALGraph(char c[], int v, int e)
 	}
 
 	//为顶点表赋值：将参数c[]中的数据放入adjList[]中
-	for (int i = 0; i < this->vertexNum; i++)
+	for (int i = 0; i < MAX_VERTEX; i++)
 	{
 		this->adjList[i].vertex = c[i];
+		//this->adjList[i].firstEdge->adjVex = -1;
 		this->adjList[i].firstEdge = NULL;
 	}
 
@@ -114,6 +115,60 @@ void ALGraph::DFS(int v)
 	}
 }
 
+void ALGraph::BFSTraverse(int v)
+{
+	//初始化visited[]
+	visitedClean();
+
+	//从v节点开始遍历图
+	BFS(v);
+
+	//检查整个图中的所有顶点，如果还有未遍历过的顶点，则从该顶点开始遍历
+	for (int i = 0; i < vertexNum; i++)
+	{
+		if (visited[i] == 0)
+		{
+			//cout << "visited是：" << visited[i] << endl;
+			BFS(i);
+		}
+	}
+}
+
+void ALGraph::BFS(int v)
+{
+	ArcNode* p;
+	cout << adjList[v].vertex << " ";//输出参数要求的顶点
+	visited[v] = 1;//将该顶点的visited状态设置为1
+	myQueue.push(adjList[v].vertex);//将该顶点入队
+	
+	//直到队列空之前都保持循环（逻辑类似树的层序遍历）
+	while (!myQueue.empty())
+	{
+		//取得当前顶点的序号，并将指针p指向该顶点的相邻顶点
+		v = myQueue.front();
+		myQueue.pop();
+		p = adjList[v].firstEdge;//指针p指向该顶点的相邻顶点（指向邻边表）
+
+		//循环该顶点的所有邻边表，找到未被visited的相邻顶点
+		while (p != NULL)
+		{
+			//如果找到了未visited的相邻顶点，则输出该相邻顶点，并将visited状态设置为1，将该相邻顶点入队，再使指针指向邻边表中的下一个节点
+			if (visited[p->adjVex] == 0)
+			{
+				cout << p->adjVex << " ";//输出该相邻顶点
+				visited[p->adjVex] = 1;//将visited状态设置为1
+				myQueue.push(p->adjVex);//使该相邻顶点入队
+				p = p->next;//使指针指向邻边表中的下一个节点
+			}
+			//如果该顶点的所有相邻顶点全部被访问过，则直接退出该邻边表的循环
+			else
+				break;
+		}
+	}
+
+
+}
+
 void ALGraph::visitedClean()
 {
 	for (int i = 0; i < MAX_VERTEX; i++)
@@ -125,7 +180,7 @@ void ALGraph::visitedClean()
 int main()
 {
 	int vNum, aNum;
-	char c[MAX_VERTEX];
+	int c[MAX_VERTEX];
 	cout << "请输入顶点数量：" << endl;
 	cin >> vNum;
 	for (int i = 0; i < vNum; i++)
@@ -141,9 +196,15 @@ int main()
 	alg.display();
 
 	int start;
-	cout << "进行深度遍历，请选择起始vertex的序号：" << endl;
+	cout << "进行深度遍历，请选择起始vertex的序号：";
 	cin >> start;
 	alg.DFSTraverse(start);
+	cout << endl;
+
+	cout << "进行广度遍历，请选择起始vertex的序号：";
+	cin >> start;
+	alg.BFSTraverse(start);
+	cout << endl;
 	
 
 	system("pause");

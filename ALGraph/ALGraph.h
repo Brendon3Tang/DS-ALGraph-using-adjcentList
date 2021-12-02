@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <queue>
 using namespace std;
 
 const int MAX_VERTEX = 10;
@@ -14,7 +15,7 @@ struct ArcNode
 //顶点表:用于创建一个储存所有顶点的数组，该数组中的每个顶点就是vertexNode。vertexNode中包含vertex的值与一条指向该vertex的邻边的指针firstEdge
 struct VertexNode 
 {
-	char vertex;
+	int vertex;
 	ArcNode* firstEdge;
 };
 
@@ -24,6 +25,7 @@ private:
 	VertexNode adjList[MAX_VERTEX];
 	int visited[MAX_VERTEX];
 	int vertexNum, arcNum; 
+	queue<int> myQueue;
 
 	void buildList();
 
@@ -32,7 +34,7 @@ private:
 	void BFS(int v);
 
 public:
-	ALGraph(char c[], int v, int e);
+	ALGraph(int c[], int v, int e);
 
 	~ALGraph();
 
